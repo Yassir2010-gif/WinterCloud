@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>This is a Heading</h1>
+<p>This is a paragraph.</p>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء منشور</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #36393f;
+            color: #dcddde;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(35, 39, 42, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #5865F2;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 2rem;
+        }
+        
+        .post-form {
+            background-color: #2C2F33;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #5865F2;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background-color: #23272A;
+            color: #dcddde;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #5865F2;
+        }
+        
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: #5865F2;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        button i {
+            margin-left: 8px;
+        }
+        
+        button:hover {
+            background-color: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .notification {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .success {
+            background-color: rgba(87, 242, 135, 0.15);
+            border-right: 4px solid #57F287;
+            color: #57F287;
+        }
+        
+        .error {
+            background-color: rgba(237, 66, 69, 0.15);
+            border-right: 4px solid #ED4245;
+            color: #ED4245;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-plus-circle"></i> إنشاء منشور جديد</h1>
+        
+        <div class="post-form">
+            <div class="form-group">
+                <label for="postTitle">العنوان</label>
+                <input type="text" id="postTitle" required placeholder="أدخل عنوان المنشور">
+            </div>
+            <div class="form-group">
+                <label for="postContent">المحتوى</label>
+                <textarea id="postContent" required placeholder="اكتب محتوى المنشور هنا..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="postChannel">القناة</label>
+                <select id="postChannel">
+                    <option value="announcements">📢 الإعلانات</option>
+                    <option value="updates">🔄 التحديثات</option>
+                    <option value="events">🎉 الأحداث</option>
+                    <option value="general">💬 عام</option>
+                </select>
+            </div>
+            <button id="submitPost"><i class="fas fa-paper-plane"></i> نشر المنشور</button>
+        </div>
+    </div>
+
+    <!-- Firebase App (core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyClz8vMaKHcFrWWGg1KbWMd_bPgbK0y6o8",
+            authDomain: "farepixel.firebaseapp.com",
+            databaseURL: "https://farepixel-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "farepixel",
+            storageBucket: "farepixel.firebasestorage.app",
+            messagingSenderId: "278170865094",
+            appId: "1:278170865094:web:1e00826ecb64e318b876c7",
+            measurementId: "G-E0ZQGZ8BVH"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const submitPostButton = document.getElementById('submitPost');
+        
+        // Submit post function
+        submitPostButton.addEventListener('click', async () => {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const channel = document.getElementById('postChannel').value;
+            
+            if (!title || !content) {
+                showNotification('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            try {
+                // Add post to Firestore
+                await db.collection('posts').add({
+                    title: title,
+                    content: content,
+                    channel: channel,
+                    author: "WinterCloud",
+                    authorId: "owner",
+                    authorRole: "owner",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Clear form
+                document.getElementById('postTitle').value = '';
+                document.getElementById('postContent').value = '';
+                
+                showNotification('تم نشر المنشور بنجاح!', 'success');
+            } catch (error) {
+                showNotification('خطأ في نشر المنشور: ' + error.message, 'error');
+            }
+        });
+        
+        // Show notification function
+        function showNotification(message, type) {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => {
+                notification.remove();
+            });
+            
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            
+            // Insert after header
+            const container = document.querySelector('.container');
+            container.insertBefore(notification, container.firstChild.nextSibling);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
